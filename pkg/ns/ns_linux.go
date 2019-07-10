@@ -91,11 +91,6 @@ type NetNS interface {
 	Close() error
 }
 
-type netNS struct {
-	file   *os.File
-	closed bool
-}
-
 // netNS implements the NetNS interface
 var _ NetNS = &netNS{}
 
@@ -132,20 +127,6 @@ func IsNSorErr(nspath string) error {
 	}
 }
 
-// Returns an object representing the namespace referred to by @path
-func GetNS(nspath string) (NetNS, error) {
-	err := IsNSorErr(nspath)
-	if err != nil {
-		return nil, err
-	}
-
-	fd, err := os.Open(nspath)
-	if err != nil {
-		return nil, err
-	}
-
-	return &netNS{file: fd}, nil
-}
 
 func (ns *netNS) Path() string {
 	return ns.file.Name()
